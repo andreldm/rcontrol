@@ -23,6 +23,7 @@
         </activity>
 
         <service android:name="org.teleal.cling.android.AndroidUpnpServiceImpl"/>
+        <service android:name="com.andreldm.rcontrol.RControlService"/>
     </application>
 
 </manifest>

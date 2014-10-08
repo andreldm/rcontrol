@@ -9,11 +9,11 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import org.teleal.cling.android.AndroidUpnpService;
-import org.teleal.cling.android.AndroidUpnpServiceImpl;
 import org.teleal.cling.controlpoint.ActionCallback;
 import org.teleal.cling.model.action.ActionInvocation;
 import org.teleal.cling.model.message.UpnpResponse;
@@ -85,7 +85,6 @@ public class MainActivity extends ListActivity {
                     if(service == null) {
                         return;
                     }
-                    executeAction(service);
 
                     DeviceDisplay d = new DeviceDisplay(device);
                     int position = listAdapter.getPosition(d);
@@ -109,14 +108,26 @@ public class MainActivity extends ListActivity {
         }
     }
 
-    private void executeAction(Service service) {
+    private void dispatchCommand(int command) {
+        for(int i = 0; i < listAdapter.getCount(); i++) {
+            DeviceDisplay dd = listAdapter.getItem(i);
+            Device d = dd.getDevice();
+
+            Service s = d.findService(Constants.SERVICE_ID);
+            if(s == null) continue;
+
+            executeAction(s, command);
+        }
+    }
+
+    private void executeAction(Service service, int command) {
         if(service == null || upnpService == null) {
             return;
         }
 
         @SuppressWarnings("unchecked")
         ActionInvocation action = new ActionInvocation(service.getAction("SendCommand"));
-        action.setInput("Command", Constants.CMD_NEXT);
+        action.setInput("Command", command);
 
         upnpService.getControlPoint().execute(new ActionCallback(action) {
             @Override
@@ -141,9 +152,8 @@ public class MainActivity extends ListActivity {
             android.R.layout.simple_list_item_1);
         setListAdapter(listAdapter);
 
-
         getApplicationContext().bindService(
-                new Intent(this, AndroidUpnpServiceImpl.class),
+                new Intent(this, RControlService.class),
                 serviceConnection,
                 Context.BIND_AUTO_CREATE
         );
@@ -151,20 +161,36 @@ public class MainActivity extends ListActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+
         if (id == R.id.action_settings) {
             return true;
         }
+
+        if (id == R.id.action_search_devices && upnpService != null) {
+            upnpService.getRegistry().removeAllRemoteDevices();
+            upnpService.getControlPoint().search();
+        }
+
+
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onPlayPause(View view) {
+        dispatchCommand(Constants.CMD_PLAY);
+    }
+
+    public void onNext(View view) {
+        dispatchCommand(Constants.CMD_NEXT);
+    }
+
+    public void onPrevious(View view) {
+        dispatchCommand(Constants.CMD_PREVIOUS);
     }
 }

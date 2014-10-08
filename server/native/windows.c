@@ -1,6 +1,6 @@
 #define WINVER 0x0500
 #include <windows.h>
-#include "Main.h"
+#include "sendkey.h"
 
 JNIEXPORT void JNICALL
 Java_com_andreldm_rcontrol_server_SendKey_sendkey(JNIEnv * a, jobject b, jint c)

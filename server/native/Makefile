@@ -1,5 +1,3 @@
-#CC=C:\TDM-GCC-64\bin\gcc
-
 # --- Windows definitions--- #
 ifeq ($(OS), Windows_NT)
 	OUTPUTFOLDER = "..\lib"
@@ -7,6 +5,7 @@ ifeq ($(OS), Windows_NT)
 	DEVNULL = NUL
 	FixPath = $(subst /,\,$1)
 	CopyFile = @if exist $1 copy $1 $2 /Y
+	CC=C:\TDM-GCC-64\bin\gcc
 
 # --- Linux definitions--- #
 else ifeq ($(shell uname), Linux)
@@ -19,10 +18,10 @@ else ifeq ($(shell uname), Linux)
 endif
 
 all:
-	@echo Available targets:
-	@echo "   linux -> linux32, linux64"
-	@echo "   mingw32"
-	@echo "   mingw64"
+	@echo 'Available targets:'
+	@echo '   linux -> linux32, linux64'
+	@echo '   mingw32'
+	@echo '   mingw64'
 
 linux: linux32 linux64
 linux32: librcontrol32.so
@@ -40,10 +39,10 @@ librcontrol64.so:
 	$(call MoveFile,$(subst \,,"$@"),$(OUTPUTFOLDER))
 
 rcontrol32.dll:
-	$(CC) -shared windows.c -o rcontrol32.dll -I"$(JAVA_HOME)/include" -I"$(JAVA_HOME)/include/win32"
+	$(CC) -shared -m32 windows.c -o rcontrol32.dll -I"$(JAVA_HOME)/include" -I"$(JAVA_HOME)/include/win32"
 
 rcontrol64.dll:
-	$(CC) -shared windows.c -o rcontrol64.dll -I"$(JAVA_HOME)/include" -I"$(JAVA_HOME)/include/win32"
+	$(CC) -shared -m64 windows.c -o rcontrol64.dll -I"$(JAVA_HOME)/include" -I"$(JAVA_HOME)/include/win32"
 
 clean:
 	rm -f *.so *.dll

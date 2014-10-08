@@ -3,6 +3,7 @@
 
     <string name="app_name">RControl</string>
     <string name="hello_world">Hello world!</string>
+    <string name="action_search_devices">Search Devices</string>
     <string name="action_settings">Settings</string>
 
 </resources>
