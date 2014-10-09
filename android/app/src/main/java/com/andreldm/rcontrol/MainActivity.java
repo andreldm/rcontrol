@@ -193,4 +193,12 @@ public class MainActivity extends ListActivity {
     public void onPrevious(View view) {
         dispatchCommand(Constants.CMD_PREVIOUS);
     }
+
+    public void onVolUp(View view) {
+        dispatchCommand(Constants.CMD_VOLUP);
+    }
+
+    public void onVolDown(View view) {
+        dispatchCommand(Constants.CMD_VOLDOWN);
+    }
 }
