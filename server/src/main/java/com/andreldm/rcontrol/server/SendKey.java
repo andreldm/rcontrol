@@ -6,11 +6,11 @@ public class SendKey {
 
 	public static void send(int cmd) {
 		Integer key = Constants.commands.get(cmd);
-		
+
 		if(key == null) {
 			return;
 		}
-		
+
 		sendkey(key.intValue());
 	}
 }

@@ -8,7 +8,7 @@ import org.teleal.cling.binding.annotations.UpnpServiceType;
 import org.teleal.cling.binding.annotations.UpnpStateVariable;
 
 @UpnpService(
-        serviceId = @UpnpServiceId("RControl"),
+		serviceId = @UpnpServiceId("RControl"),
         serviceType = @UpnpServiceType(value = "RControl", version = 1)
 )
 public class Service {
@@ -18,6 +18,13 @@ public class Service {
     @UpnpAction
     public void sendCommand(@UpnpInputArgument(name = "Command") Integer command) {
         System.out.println("Command is: " + command);
+        
+        String description = Constants.commandsDescription.get(command);
+
+        if(description != null) {
+        	MessageDispatcher.getInstance().dispatchMessage("Command received: " + description);
+        }
+        
         try {
         	SendKey.send(command);
         }catch(Throwable e) {

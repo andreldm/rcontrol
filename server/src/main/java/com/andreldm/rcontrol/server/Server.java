@@ -29,21 +29,14 @@ public class Server implements Runnable {
 		}
 	}
 	
-    public static void main(String[] args) throws Exception {
-		System.out.println("Library Path: " + System.getProperty("java.library.path"));
-		Util.loadLib();
-        Thread serverThread = new Thread(new Server());
-        serverThread.setDaemon(false);
-        serverThread.start();
-    }
+	private final UpnpService upnpService = new UpnpServiceImpl();
 
     public void run() {
         try {
-            final UpnpService upnpService = new UpnpServiceImpl();
-
             Runtime.getRuntime().addShutdownHook(new Thread() {
                 @Override
                 public void run() {
+                	System.out.println("Shuting down UPnP service...");
                     upnpService.shutdown();
                 }
             });
@@ -55,6 +48,10 @@ public class Server implements Runnable {
             ex.printStackTrace(System.err);
             System.exit(1);
         }
+    }
+    
+    public void shutdown() {
+    	upnpService.shutdown();
     }
 
 	LocalDevice createDevice() throws Exception {
@@ -80,4 +77,3 @@ public class Server implements Runnable {
 		return new LocalDevice(identity, type, details, icon, service);
 	}
 }
-

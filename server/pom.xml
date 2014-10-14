@@ -44,5 +44,10 @@
 			<artifactId>cling-core</artifactId>
 			<version>1.0.5</version>
 		</dependency>
+		<dependency>
+    		<groupId>com.miglayout</groupId>
+    		<artifactId>miglayout-swing</artifactId>
+    		<version>4.2</version>
+		</dependency>
 	</dependencies>
 </project>
