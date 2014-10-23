@@ -3,11 +3,7 @@ package com.andreldm.rcontrol.server;
 import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.Container;
-import java.awt.Image;
-import java.awt.MenuItem;
-import java.awt.PopupMenu;
 import java.awt.SystemTray;
-import java.awt.Toolkit;
 import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -30,7 +26,6 @@ import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -41,10 +36,9 @@ public class Window extends JFrame implements IMessageReceiver {
 	private JButton btnStartStop;
 	private JScrollPane scrollPane;
 	private JCheckBox chkStartServer;
+	private JCheckBox chkStartMinimized;
 	private DefaultListModel<String> listModel;
-	private SystemTray tray;
-	private TrayIcon trayIcon;
-	
+
 	private SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
 	private boolean isServerRunning = false;
 	private final int MSG_LIMIT = 100;
@@ -53,13 +47,25 @@ public class Window extends JFrame implements IMessageReceiver {
 	private final Preferences prefs = Preferences.userRoot().node(this.getClass().getName());
 
 	public Window() {
-		initUI();
-		MessageDispatcher.getInstance().registerReceiver(this);
-		
 		boolean autostart = prefs.getBoolean("auto-start-server", false);
-		chkStartServer.setSelected(autostart);
+		boolean startminimized = prefs.getBoolean("start-minimized", false);
+
+		initUI();
+        setupTrayIcon();
+		MessageDispatcher.getInstance().registerReceiver(this);
+
 		if(autostart) {
+			chkStartServer.setSelected(true);
 			startServer();
+		}
+
+		if(startminimized) {
+			chkStartMinimized.setSelected(true);
+	        SwingUtilities.invokeLater(new Runnable() {
+	            public void run() {
+	    			setState(JFrame.ICONIFIED);
+	            }
+	        });
 		}
 	}
 
@@ -68,8 +74,7 @@ public class Window extends JFrame implements IMessageReceiver {
 		Container container = getContentPane(); 
 		container.setLayout(layout);
 
-        lblStatus = new JLabel();
-        lblStatus.setText("Server is NOT running");
+        lblStatus = new JLabel("Server is NOT running");
         lblStatus.setForeground(Color.RED);
 
         btnStartStop = new JButton("Start");
@@ -79,7 +84,7 @@ public class Window extends JFrame implements IMessageReceiver {
 				toggleServer();
 			}
 		});
-        
+
         chkStartServer = new JCheckBox("Auto-start server");
         chkStartServer.addActionListener(new ActionListener() {
 			@Override
@@ -88,8 +93,16 @@ public class Window extends JFrame implements IMessageReceiver {
 			}
 		});
 
+        chkStartMinimized = new JCheckBox("Start minimized");
+        chkStartMinimized.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				prefs.putBoolean("start-minimized", chkStartMinimized.isSelected());
+			}
+		});
+
         listModel = new DefaultListModel<>();
-        
+
         JList<String> listMsg = new JList<>();
         listMsg.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         listMsg.setModel(listModel);
@@ -99,28 +112,28 @@ public class Window extends JFrame implements IMessageReceiver {
 
         container.add(lblStatus, "cell 0 0, grow");
         container.add(btnStartStop, "cell 1 0, grow");
-        container.add(chkStartServer, "cell 0 1");
+        container.add(chkStartServer, "cell 0 1, split 2");
+        container.add(chkStartMinimized, "cell 0 1");
         container.add(scrollPane, "cell 0 2, grow, span 2");
 
         setIconImage(new ImageIcon(Window.class.getResource("icon.png")).getImage());
-        setTitle("Message Boxes");
+        setTitle("RControl");
         setSize(450, 280);
         setLocationRelativeTo(null);
         setResizable(false);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        
-        setupTrayIcon();
 	}
-	
+
 	private void setupTrayIcon() {
 		if (!SystemTray.isSupported()) {
 			System.err.println("system tray NOT supported");
 			return;
 		}
 
-		tray = SystemTray.getSystemTray();
+		final SystemTray tray = SystemTray.getSystemTray();
 
-		trayIcon = new TrayIcon(new ImageIcon(Window.class.getResource("icon.xpm")).getImage(), "RControl");
+		final TrayIcon trayIcon = new TrayIcon(getIconImage(), getTitle());
+		trayIcon.setImageAutoSize(true);
 		trayIcon.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseReleased(MouseEvent e) {}
@@ -137,29 +150,25 @@ public class Window extends JFrame implements IMessageReceiver {
 				setExtendedState(JFrame.NORMAL);
 			}
 		});
-		trayIcon.setImageAutoSize(true);
-		
+
 		addWindowStateListener(new WindowStateListener() {
 			public void windowStateChanged(WindowEvent e) {
 				try {
-					switch (e.getNewState()) {
-					case ICONIFIED:
-					case 7:
+					int state = e.getNewState();
+
+					if(state == ICONIFIED || state == 7) {
 						tray.add(trayIcon);
 						setVisible(false);
-						break;
-						
-					case NORMAL:
-					case MAXIMIZED_BOTH:
+						return;
+					}
+
+					if(state == NORMAL || state == MAXIMIZED_BOTH) {
 						tray.remove(trayIcon);
 						setVisible(true);
-						break;
-						
-					default:
-						break;
+						return;
 					}
 				} catch (AWTException ex) {
-					// ignore
+					ex.printStackTrace();
 				}
 			}
 		});
@@ -178,25 +187,26 @@ public class Window extends JFrame implements IMessageReceiver {
 	    new Thread(server).start();
 
 		btnStartStop.setText("Stop");
-		MessageDispatcher.getInstance().dispatchMessage("Starting server");
+		MessageDispatcher.getInstance().dispatch("Starting server");
         lblStatus.setText("Server is running");
 		lblStatus.setForeground(Color.GREEN);
 		
 		isServerRunning = true;
 	}
-	
+
 	private void stopServer() {
 		if(server != null)
 			server.shutdown();
 
-		MessageDispatcher.getInstance().dispatchMessage("Stop server");
+		MessageDispatcher.getInstance().dispatch("Stop server");
 		btnStartStop.setText("Start");
         lblStatus.setText("Server is NOT running");
 		lblStatus.setForeground(Color.RED);
 
+		server = null;
 		isServerRunning = false;
 	}
-	
+
 	@Override
 	public void receiveMessage(String msg) {
 		if (listModel.getSize() >= MSG_LIMIT) {
@@ -213,31 +223,4 @@ public class Window extends JFrame implements IMessageReceiver {
 	        }
         });
 	}
-
-	public static void main(String[] args) {
-		try {
-			Util.loadLib();
-
-			switch(Util.whichOS()) {
-			case Constants.OS_LINUX:
-			    UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
-			    break;
-			case Constants.OS_WINDOWS:
-				UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-			    break;
-			default:
-				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-			    break;
-			}
-
-	        SwingUtilities.invokeLater(new Runnable() {
-	            public void run() {
-	                Window w = new Window();
-	                w.setVisible(true);
-	            }
-	        });
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-    }
 }

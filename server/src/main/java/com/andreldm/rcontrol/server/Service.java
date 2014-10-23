@@ -22,7 +22,7 @@ public class Service {
         String description = Constants.commandsDescription.get(command);
 
         if(description != null) {
-        	MessageDispatcher.getInstance().dispatchMessage("Command received: " + description);
+        	MessageDispatcher.getInstance().dispatch("Command received: " + description);
         }
         
         try {

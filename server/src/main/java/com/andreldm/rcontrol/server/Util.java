@@ -1,5 +1,7 @@
 package com.andreldm.rcontrol.server;
 
+import javax.swing.JOptionPane;
+
 public class Util {
 	public static int whichOS() {
 		String os = System.getProperty("os.name");
@@ -36,22 +38,25 @@ public class Util {
 	}
 
 	public static boolean loadLib() {
+		String errorMsg = "Error while loading native library ([lib]rcontrol).";
+
 	    try {
 	    	switch (Util.whichArch()) {
 			case Constants.ARCH_32:
 				System.loadLibrary("rcontrol32");
 				System.out.println("Library: 32-bits");
 				return true;
+
 			case Constants.ARCH_64:
 				System.loadLibrary("rcontrol64");
 				System.out.println("Library: 64-bits");
 				return true;
 
 			default:
-				// TODO: Error!
-				return false;
+				throw new Exception(errorMsg);
 			}
 	    } catch (Throwable e) {
+			JOptionPane.showMessageDialog(null, errorMsg, "Error", JOptionPane.ERROR_MESSAGE);
 	        e.printStackTrace();
 	        System.exit(1);
 	    }

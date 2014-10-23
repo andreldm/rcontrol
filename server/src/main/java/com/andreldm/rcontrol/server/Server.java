@@ -25,10 +25,10 @@ public class Server implements Runnable {
 			Logger globalLogger = Logger.getLogger(java.util.logging.Logger.GLOBAL_LOGGER_NAME);
 			globalLogger.setLevel(java.util.logging.Level.OFF);
 		}  catch (Exception e) {
-			// ignore
+			e.printStackTrace();
 		}
 	}
-	
+
 	private final UpnpService upnpService = new UpnpServiceImpl();
 
     public void run() {
@@ -49,25 +49,25 @@ public class Server implements Runnable {
             System.exit(1);
         }
     }
-    
+
     public void shutdown() {
     	upnpService.shutdown();
     }
 
+	@SuppressWarnings("unchecked")
 	LocalDevice createDevice() throws Exception {
-		DeviceIdentity identity = new DeviceIdentity(
-				UDN.uniqueSystemIdentifier("RControl"));
+		DeviceIdentity identity =
+				new DeviceIdentity(UDN.uniqueSystemIdentifier("RControl"));
 
 		DeviceType type = new UDADeviceType("RControl", 1);
 
 		DeviceDetails details = new DeviceDetails("RControl",
-				new ManufacturerDetails("AndreLDM"), new ModelDetails(
-						"RControl", "A Remote Controller for Android.",	"v1"));
+				new ManufacturerDetails("AndreLDM"),
+				new ModelDetails("RControl", "A Remote Controller for Android.", "v1"));
 
-		Icon icon = new Icon("image/png", 64, 64, 8, getClass().getResource(
-				"icon.png"));
+		Icon icon = new Icon("image/png", 64, 64, 8,
+				getClass().getResource("icon.png"));
 
-		@SuppressWarnings("unchecked")
 		LocalService<Service> service = new AnnotationLocalServiceBinder()
 				.read(Service.class);
 

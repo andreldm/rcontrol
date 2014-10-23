@@ -20,6 +20,7 @@ public class Constants {
 	public static final int ARCH_64 = 2;
 
     public static final HashMap<Integer, Integer> commands = new HashMap<>();
+    public static final HashMap<Integer, String> commandsDescription = new HashMap<>();
 
 	static {
 		switch (Util.whichOS()) {
@@ -49,7 +50,6 @@ public class Constants {
 		}
     }
 
-    public static final HashMap<Integer, String> commandsDescription = new HashMap<>();
     static {
     	commandsDescription.put(CMD_PLAY, "Play");
     	commandsDescription.put(CMD_STOP, "Stop");
