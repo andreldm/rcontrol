@@ -3,9 +3,6 @@ package com.andreldm.rcontrol;
 import org.teleal.cling.model.types.ServiceId;
 import org.teleal.cling.model.types.UDAServiceId;
 
-/**
- * Created by andre on 9/23/14.
- */
 public class Constants {
     public static final String TAG = "RCONTROL";
     public static final ServiceId SERVICE_ID = new UDAServiceId("RControl");
