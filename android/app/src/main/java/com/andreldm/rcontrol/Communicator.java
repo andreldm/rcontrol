@@ -64,6 +64,7 @@ public class Communicator extends Observable {
     }
 
     public void refresh() {
+        System.out.println(upnpService);
         if (upnpService != null) {
             upnpService.getRegistry().removeAllRemoteDevices();
             upnpService.getControlPoint().search();

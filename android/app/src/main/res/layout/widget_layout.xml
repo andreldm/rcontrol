@@ -1,62 +1,67 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/LinearLayout1"
+    android:id="@+id/WidgetLayout"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
     android:paddingLeft="0dp"
     android:paddingRight="0dp"
-    android:paddingTop="18dp" >
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp"
+    android:background="@drawable/widget_background"
+    android:gravity="center_horizontal">
 
-    <Button
+    <ImageButton
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="48dp"
+        android:layout_height="match_parent"
+        android:id="@+id/button_previous"
+        android:src="@drawable/ic_previous"
+        android:scaleType="centerCrop"
+        android:layout_gravity="center_vertical" />
+
+    <ImageButton
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="48dp"
+        android:layout_height="match_parent"
         android:id="@+id/button_play_pause"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:drawableLeft="@android:drawable/ic_media_play"
-        android:drawableRight="@android:drawable/ic_media_pause" />
+        android:src="@drawable/ic_play"
+        android:scaleType="centerCrop"
+        android:layout_gravity="center_vertical" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+    <ImageButton
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="48dp"
+        android:layout_height="match_parent"
+        android:id="@+id/button_next"
+        android:src="@drawable/ic_next"
+        android:scaleType="centerCrop"
+        android:layout_gravity="center_vertical" />
 
-        <Button
-            android:id="@+id/button_backward"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:drawableLeft="@android:drawable/ic_media_previous" />
+    <ImageButton
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="48dp"
+        android:layout_height="match_parent"
+        android:id="@+id/button_vol_minus"
+        android:src="@drawable/ic_volume_minus"
+        android:scaleType="centerCrop"
+        android:layout_gravity="center_vertical" />
 
-        <Button
-            android:id="@+id/button_forward"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:drawableLeft="@android:drawable/ic_media_next" />
+    <ImageButton
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="48dp"
+        android:layout_height="match_parent"
+        android:id="@+id/button_vol_plus"
+        android:src="@drawable/ic_volume_plus"
+        android:scaleType="centerCrop"
+        android:layout_gravity="center_vertical" />
 
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal" >
-
-        <Button
-            android:id="@+id/button_vol_less"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="-"
-            android:drawableLeft="@android:drawable/ic_lock_silent_mode_off" />
-
-        <Button
-            android:id="@+id/button_vol_more"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="+"
-            android:drawableLeft="@android:drawable/ic_lock_silent_mode_off" />
-
-    </LinearLayout>
-    
+    <ImageButton
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="48dp"
+        android:layout_height="match_parent"
+        android:id="@+id/button_sync"
+        android:src="@drawable/ic_sync_off"
+        android:scaleType="centerCrop"
+        android:layout_gravity="center_vertical" />
 
 </LinearLayout>
