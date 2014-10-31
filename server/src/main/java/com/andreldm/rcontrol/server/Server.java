@@ -1,5 +1,6 @@
 package com.andreldm.rcontrol.server;
 
+import java.net.URI;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
@@ -65,8 +66,7 @@ public class Server implements Runnable {
 				new ManufacturerDetails("AndreLDM"),
 				new ModelDetails("RControl", "A Remote Controller for Android.", "v1"));
 
-		Icon icon = new Icon("image/png", 64, 64, 8,
-				getClass().getResource("icon.png"));
+		Icon icon = new Icon("image/png", 64, 64, 8, URI.create("icon.png"));
 
 		LocalService<Service> service = new AnnotationLocalServiceBinder()
 				.read(Service.class);

@@ -1,5 +1,7 @@
 package com.andreldm.rcontrol.server;
 
+import java.nio.file.Paths;
+
 import javax.swing.JOptionPane;
 
 public class Util {
@@ -41,14 +43,17 @@ public class Util {
 		String errorMsg = "Error while loading native library ([lib]rcontrol).";
 
 	    try {
+	    	String path = Paths.get(".").toAbsolutePath().normalize().toString();
+	    	path += "/lib/";
+	    	
 	    	switch (Util.whichArch()) {
 			case Constants.ARCH_32:
-				System.loadLibrary("rcontrol32");
+				System.load(path + System.mapLibraryName("rcontrol32"));
 				System.out.println("Library: 32-bits");
 				return true;
 
 			case Constants.ARCH_64:
-				System.loadLibrary("rcontrol64");
+				System.load(path + System.mapLibraryName("rcontrol64"));
 				System.out.println("Library: 64-bits");
 				return true;
 
