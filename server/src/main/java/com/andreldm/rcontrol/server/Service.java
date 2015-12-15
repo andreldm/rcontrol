@@ -1,34 +1,38 @@
 package com.andreldm.rcontrol.server;
 
-import org.teleal.cling.binding.annotations.UpnpAction;
-import org.teleal.cling.binding.annotations.UpnpInputArgument;
-import org.teleal.cling.binding.annotations.UpnpService;
-import org.teleal.cling.binding.annotations.UpnpServiceId;
-import org.teleal.cling.binding.annotations.UpnpServiceType;
-import org.teleal.cling.binding.annotations.UpnpStateVariable;
+import java.io.IOException;
+import java.net.InetAddress;
 
-@UpnpService(
-		serviceId = @UpnpServiceId("RControl"),
-        serviceType = @UpnpServiceType(value = "RControl", version = 1)
-)
+import javax.jmdns.JmDNS;
+import javax.jmdns.ServiceInfo;
+
 public class Service {
-    @UpnpStateVariable(defaultValue="0", sendEvents = false)
-    private Integer command;
+	private static String SERVICE_TYPE = "_rcontrol._tcp.local.";
+	private static String SERVICE_NAME = "rcontrol";
+	private static String SERVICE_DESCRIPTION = "A Remote Controller for Android";
 
-    @UpnpAction
-    public void sendCommand(@UpnpInputArgument(name = "Command") Integer command) {
-        System.out.println("Command is: " + command);
-        
-        String description = Constants.commandsDescription.get(command);
+	private JmDNS jmdns;
 
-        if(description != null) {
-        	MessageDispatcher.getInstance().dispatch("Command received: " + description);
-        }
-        
-        try {
-        	SendKey.send(command);
-        }catch(Throwable e) {
-        	e.printStackTrace();
-        }
-    }
+	public void start(int port) {
+		try {
+			InetAddress inetAddress = Util.getInetAddress();
+			// TODO check null
+			
+			jmdns = JmDNS.create(inetAddress);
+			jmdns.registerService(ServiceInfo.create(SERVICE_TYPE, SERVICE_NAME, port, SERVICE_DESCRIPTION));
+		} catch (IOException e) {
+			e.printStackTrace();
+			// TODO Handle, at least log
+		}
+	}
+
+	public void stop() {
+		try {
+			jmdns.unregisterAllServices();
+			jmdns.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+			// TODO Handle, at least log
+		}
+	}
 }

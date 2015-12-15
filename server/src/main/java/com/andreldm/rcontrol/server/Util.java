@@ -1,6 +1,13 @@
 package com.andreldm.rcontrol.server;
 
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.ServerSocket;
+import java.net.SocketException;
 import java.nio.file.Paths;
+import java.util.Collections;
+import java.util.Enumeration;
 
 import javax.swing.JOptionPane;
 
@@ -67,5 +74,35 @@ public class Util {
 	    }
 
 	    return false;
+	}
+
+	public static InetAddress getInetAddress() throws SocketException {
+		Enumeration<NetworkInterface> nets = NetworkInterface.getNetworkInterfaces();
+		for (NetworkInterface netint : Collections.list(nets)) {
+			// ignore the loopback interface
+			if ("lo".equals(netint.getName())) {
+				continue;
+			}
+
+			Enumeration<InetAddress> inetAddresses = netint.getInetAddresses();
+			for (InetAddress inetAddress : Collections.list(inetAddresses)) {
+				System.out.printf("InetAddress: %s\n", inetAddress);
+				// TODO Improve IP resolving
+				if (inetAddress.getHostAddress().startsWith("192.168")) {
+					return inetAddress;
+				}
+			}
+		}
+
+		return null;
+	}
+
+	public static int findFreePort() {
+		try (ServerSocket socket = new ServerSocket(0)) {
+			return socket.getLocalPort();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return -1;
 	}
 }

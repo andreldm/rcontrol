@@ -1,11 +1,7 @@
 package com.andreldm.rcontrol;
 
-import org.teleal.cling.model.types.ServiceId;
-import org.teleal.cling.model.types.UDAServiceId;
-
 public class Constants {
     public static final String TAG = "RCONTROL";
-    public static final ServiceId SERVICE_ID = new UDAServiceId("RControl");
 
     public static final int CMD_PLAY = 0;
     public static final int CMD_STOP = 1;

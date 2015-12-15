@@ -40,10 +40,17 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.teleal.cling</groupId>
-			<artifactId>cling-core</artifactId>
-			<version>1.0.5</version>
+			<groupId>javax.jmdns</groupId>
+			<artifactId>jmdns</artifactId>
+			<version>3.4.1</version>
 		</dependency>
+
+		<dependency>
+			<groupId>com.corundumstudio.socketio</groupId>
+			<artifactId>netty-socketio</artifactId>
+			<version>1.7.8</version>
+		</dependency>
+
 		<dependency>
     		<groupId>com.miglayout</groupId>
     		<artifactId>miglayout-swing</artifactId>

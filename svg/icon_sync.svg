@@ -14,9 +14,9 @@
    height="128"
    id="svg3757"
    version="1.1"
-   inkscape:version="0.48.5 r10040"
-   sodipodi:docname="icon_sync_on.svg"
-   inkscape:export-filename="ic_sync_on.png"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="icon_sync_off.svg"
+   inkscape:export-filename="ic_sync.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
   <defs
@@ -297,14 +297,6 @@
          stdDeviation="0.902529"
          id="feGaussianBlur3805" />
     </filter>
-    <filter
-       inkscape:collect="always"
-       id="filter3807">
-      <feGaussianBlur
-         inkscape:collect="always"
-         stdDeviation="0.19583855"
-         id="feGaussianBlur3809" />
-    </filter>
   </defs>
   <sodipodi:namedview
      id="base"
@@ -314,13 +306,13 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="4.0594664"
-     inkscape:cx="21.325523"
-     inkscape:cy="60.48369"
+     inkscape:cx="-18.950706"
+     inkscape:cy="62.454392"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1920"
-     inkscape:window-height="1020"
+     inkscape:window-height="1027"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1">
@@ -340,7 +332,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -369,15 +361,5 @@
          d="m 4.0063039,974.32635 48.6853011,20.81536 -11.060882,7.92549 c 6.450868,12.9367 34.680089,19.9449 47.901459,-4.61594 l 27.434468,13.58664 c -19.651456,42.2668 -74.345604,47.7701 -100.59306,10.3641 l -12.0189119,8.7094 z"
          style="fill:#ffffff;fill-opacity:1;stroke:url(#linearGradient3801);stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
     </g>
-    <path
-       sodipodi:type="arc"
-       style="fill:#8ae234;fill-opacity:1;fill-rule:nonzero;stroke:none;filter:url(#filter3807)"
-       id="path3026"
-       sodipodi:cx="-37.443344"
-       sodipodi:cy="66.661888"
-       sodipodi:rx="13.055903"
-       sodipodi:ry="13.055903"
-       d="m -24.387441,66.661888 c 0,7.210576 -5.845327,13.055904 -13.055903,13.055904 -7.210576,0 -13.055904,-5.845328 -13.055904,-13.055904 0,-7.210576 5.845328,-13.055903 13.055904,-13.055903 7.210576,0 13.055903,5.845327 13.055903,13.055903 z"
-       transform="matrix(0.80423389,0,0,0.80423389,94.113206,934.75043)" />
   </g>
 </svg>

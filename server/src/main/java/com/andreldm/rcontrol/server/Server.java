@@ -1,79 +1,57 @@
 package com.andreldm.rcontrol.server;
 
-import java.net.URI;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
+import com.corundumstudio.socketio.AckRequest;
+import com.corundumstudio.socketio.Configuration;
+import com.corundumstudio.socketio.SocketIOClient;
+import com.corundumstudio.socketio.SocketIOServer;
+import com.corundumstudio.socketio.listener.DataListener;
 
-import org.teleal.cling.UpnpService;
-import org.teleal.cling.UpnpServiceImpl;
-import org.teleal.cling.binding.annotations.AnnotationLocalServiceBinder;
-import org.teleal.cling.model.DefaultServiceManager;
-import org.teleal.cling.model.meta.DeviceDetails;
-import org.teleal.cling.model.meta.DeviceIdentity;
-import org.teleal.cling.model.meta.Icon;
-import org.teleal.cling.model.meta.LocalDevice;
-import org.teleal.cling.model.meta.LocalService;
-import org.teleal.cling.model.meta.ManufacturerDetails;
-import org.teleal.cling.model.meta.ModelDetails;
-import org.teleal.cling.model.types.DeviceType;
-import org.teleal.cling.model.types.UDADeviceType;
-import org.teleal.cling.model.types.UDN;
+public class Server {
+	private SocketIOServer server;
 
-public class Server implements Runnable {
-	static {
+	private void sendCommand(Integer command) {
+		System.out.println("Command received: " + command);
+
+		String description = Constants.commandsDescription.get(command);
+
+		if (description != null) {
+			MessageDispatcher.getInstance().dispatch("Command received: " + description);
+		}
+
 		try {
-			LogManager.getLogManager().reset();
-			Logger globalLogger = Logger.getLogger(java.util.logging.Logger.GLOBAL_LOGGER_NAME);
-			globalLogger.setLevel(java.util.logging.Level.OFF);
-		}  catch (Exception e) {
+			SendKey.send(command);
+		} catch (Throwable e) {
 			e.printStackTrace();
 		}
 	}
 
-	private final UpnpService upnpService = new UpnpServiceImpl();
+	public void start(int port) {
+		Configuration config = new Configuration();
+		config.setHostname("0.0.0.0");
+		config.setPort(port);
 
-    public void run() {
-        try {
-            Runtime.getRuntime().addShutdownHook(new Thread() {
-                @Override
-                public void run() {
-                	System.out.println("Shuting down UPnP service...");
-                    upnpService.shutdown();
-                }
-            });
+		if (server != null) {
+			server.stop();
+		}
 
-            // Add the bound local device to the registry
-            upnpService.getRegistry().addDevice(createDevice());
-        } catch (Exception ex) {
-            System.err.println("Exception occured: " + ex);
-            ex.printStackTrace(System.err);
-            System.exit(1);
-        }
-    }
+		server = new SocketIOServer(config);
+		server.addEventListener("rcontrol", String.class, new CommandListener());
+		server.start();
+	}
 
-    public void shutdown() {
-    	upnpService.shutdown();
-    }
+	public void stop() {
+		server.stop();
+	}
 
-	@SuppressWarnings("unchecked")
-	LocalDevice createDevice() throws Exception {
-		DeviceIdentity identity =
-				new DeviceIdentity(UDN.uniqueSystemIdentifier("RControl"));
-
-		DeviceType type = new UDADeviceType("RControl", 1);
-
-		DeviceDetails details = new DeviceDetails("RControl",
-				new ManufacturerDetails("AndreLDM"),
-				new ModelDetails("RControl", "A Remote Controller for Android.", "v1"));
-
-		Icon icon = new Icon("image/png", 64, 64, 8, URI.create("icon.png"));
-
-		LocalService<Service> service = new AnnotationLocalServiceBinder()
-				.read(Service.class);
-
-		service.setManager(new DefaultServiceManager<Service>(
-				service, Service.class));
-
-		return new LocalDevice(identity, type, details, icon, service);
+	private class CommandListener implements DataListener<String> {
+		@Override
+		public void onData(SocketIOClient client, String data, AckRequest ackSender) throws Exception {
+			try {
+				Integer command = Integer.valueOf(data);
+				sendCommand(command);
+			} catch (NumberFormatException e) {
+				System.out.println("Unknown command: " + data);
+			}
+		}
 	}
 }

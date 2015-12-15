@@ -44,11 +44,15 @@ public class Window extends JFrame implements IMessageReceiver {
 	private final int MSG_LIMIT = 100;
 
 	private Server server = null;
+	private Service service = null;
 	private final Preferences prefs = Preferences.userRoot().node(this.getClass().getName());
 
 	public Window() {
 		boolean autostart = prefs.getBoolean("auto-start-server", false);
 		boolean startminimized = prefs.getBoolean("start-minimized", false);
+		
+		server = new Server();
+		service = new Service();
 
 		initUI();
         setupTrayIcon();
@@ -174,8 +178,8 @@ public class Window extends JFrame implements IMessageReceiver {
 		});
 	}
 
-	private void toggleServer () {
-		if(isServerRunning) {
+	private void toggleServer() {
+		if (isServerRunning) {
 			stopServer();
 		} else {
 			startServer();
@@ -183,28 +187,48 @@ public class Window extends JFrame implements IMessageReceiver {
 	}
 
 	private void startServer() {
-		server = new Server();
-	    new Thread(server).start();
-
-		btnStartStop.setText("Stop");
-		MessageDispatcher.getInstance().dispatch("Starting server");
-        lblStatus.setText("Server is running");
-		lblStatus.setForeground(Color.GREEN);
+		btnStartStop.setText("Starting...");
+		btnStartStop.setEnabled(false);
 		
-		isServerRunning = true;
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				int port = Util.findFreePort();
+				server.start(port);
+				service.start(port);
+
+				btnStartStop.setText("Stop");
+				btnStartStop.setEnabled(true);
+
+				MessageDispatcher.getInstance().dispatch("Starting server at " + port);
+				lblStatus.setText("Server is running");
+				lblStatus.setForeground(Color.GREEN);
+
+				isServerRunning = true;
+			}
+		}).start();
 	}
 
 	private void stopServer() {
-		if(server != null)
-			server.shutdown();
+		btnStartStop.setText("Stopping...");
+		btnStartStop.setEnabled(false);
+		
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				if (server != null) server.stop();
+				if (service != null) service.stop();
 
-		MessageDispatcher.getInstance().dispatch("Stop server");
-		btnStartStop.setText("Start");
-        lblStatus.setText("Server is NOT running");
-		lblStatus.setForeground(Color.RED);
+				btnStartStop.setText("Start");
+				btnStartStop.setEnabled(true);
 
-		server = null;
-		isServerRunning = false;
+				MessageDispatcher.getInstance().dispatch("Stop server");
+		        lblStatus.setText("Server is NOT running");
+				lblStatus.setForeground(Color.RED);
+
+				isServerRunning = false;
+			}
+		}).start();
 	}
 
 	@Override

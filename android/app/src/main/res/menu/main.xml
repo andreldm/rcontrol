@@ -1,15 +1,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".MainActivity" >
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.TestActivity" >
 
     <item android:id="@+id/action_search_devices"
         android:title="@string/action_search_devices"
         android:orderInCategory="100"
         android:icon="@android:drawable/ic_popup_sync"
-        android:showAsAction="ifRoom" />
+        app:showAsAction="ifRoom" />
 
     <item android:id="@+id/action_settings"
         android:title="@string/action_settings"
         android:orderInCategory="100"
-        android:showAsAction="never" />
+        app:showAsAction="never" />
 </menu>
